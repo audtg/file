@@ -9,9 +9,17 @@ $dbh = ibase_connect($host, $username, $password, 'utf-8');
 
 $faker = Faker\Factory::create('ru_RU');
 
-$preparedSQL = ibase_prepare('INSERT INTO test (mat_id, mat_diler_id, part_no, model, name) VALUES (?, ?, ?, ?, ?) ');
+//$preparedSQL = ibase_prepare('INSERT INTO test (mat_id, mat_diler_id, part_no, model, name) VALUES (?, ?, ?, ?, ?) ');
+//
+//
+//for ($i = 1; $i <= 10; $i++) {
+//    $sth = ibase_execute($preparedSQL, $faker->randomNumber(), $faker->userName, $faker->swiftBicNumber, $faker->company, $faker->sentences[0]);
+//}
 
 
-for ($i = 1; $i <= 10; $i++) {
-    $sth = ibase_execute($preparedSQL, $faker->randomNumber(), $faker->userName, $faker->swiftBicNumber, $faker->company, $faker->sentences[0]);
+$preparedSQL = ibase_prepare('INSERT INTO SUBJECTS (SUBJECT_ID, SUBJECT_NAME) VALUES (?, ?) ');
+
+
+for ($i = 1; $i <= 20; $i++) {
+    $sth = ibase_execute($preparedSQL, $faker->randomDigitNotNull(), $faker->sentence());
 }
