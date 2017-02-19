@@ -10,11 +10,11 @@ function exception_error_handler($severity, $message, $file, $line)
 
 set_error_handler("exception_error_handler");
 
-file_put_contents('post.log', print_r($_POST, true));
+//file_put_contents('post.log', print_r($_POST, true));
 
 $data = http_build_query($_POST);
 
-$urlPrefix = 'http://files/subscription/';
+$urlPrefix = 'http://file/subscription/';
 $url = $urlPrefix . 'ws-addSubscription.php';
 
 $opts = array(
@@ -29,7 +29,9 @@ $opts = array(
 
 $context = stream_context_create($opts);
 
-//$xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, false);
+$xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, false);
+
+header('Location: index.php');
 
 //$result = array();
 //

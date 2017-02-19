@@ -59,8 +59,8 @@ function getNamesByCategory($category) {
 }
 
 function saveFilesToDb($dbh, $data) {
-    $result = array();
-    $preparedSQL = ibase_prepare('INSERT INTO MYPICTURES (CATEGORY, NAME, PICTURE) VALUES (?, ?, ?) RETURNING NAME ');
+     $result = array();
+   $preparedSQL = ibase_prepare('INSERT INTO MYPICTURES (CATEGORY, NAME, PICTURE) VALUES (?, ?, ?) RETURNING NAME ');
     foreach ($data as $category => $item) {
         foreach ($item as $name => $picture) {
             try {

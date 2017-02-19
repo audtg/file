@@ -11,15 +11,27 @@
 
     </script>
 
+    <style>
+        .bloc {
+            display: inline-block;
+            vertical-align: top;
+            overflow: hidden;
+            border: solid grey 1px;
+
+        }
+
+        .bloc select {
+            padding: 10px;
+            margin: -5px -20px -5px -5px;
+            width: 400px;
+        }
+    </style>
+
 </head>
 <body>
 
 
 <?php
-
-$host = 'localhost:C:\Program Files\Firebird\Firebird_2_5\data\test.fdb';
-$username = 'sysdba';
-$password = 'masterkey';
 
 function exception_error_handler($severity, $message, $file, $line)
 {
@@ -31,16 +43,13 @@ function exception_error_handler($severity, $message, $file, $line)
 
 set_error_handler("exception_error_handler");
 
-$dbh = ibase_connect($host, $username, $password, 'utf-8');
+$urlPrefix = 'http://file/subscription/';
+$url = $urlPrefix . 'ws-getSubscriptionList.php';
 
-$preparedSQL = ibase_prepare('
-select ss.CONTACT_ID,  c.CONTACT_NAME, ss.SUBJECT_ID, s.SUBJECT_NAME
-from SUBSCRIPTIONS ss
-INNER JOIN CONTACTS c ON c.CONTACT_ID = ss.CONTACT_ID
-INNER JOIN SUBJECTS s ON s.SUBJECT_ID = ss.SUBJECT_ID
-order by s.SUBJECT_NAME, c.CONTACT_NAME');
-try {
-$sth = ibase_execute($preparedSQL);
+$context = stream_context_create();
+
+$xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, false);
+
 ?>
 
 <div id="list-div">
@@ -51,29 +60,47 @@ $sth = ibase_execute($preparedSQL);
         <th></th>
         </thead>
         <tbody>
-        <? while ($row = ibase_fetch_object($sth)) : ?>
+        <? foreach($xml->subscription as $subscription) : ?>
             <tr>
-                <td><?= $row->SUBJECT_NAME; ?></td>
-                <td><?= $row->CONTACT_NAME; ?></td>
-                <td><a class="trash" data-subject_id="<?= $row->SUBJECT_ID; ?>" data-contact_id="<?= $row->CONTACT_ID; ?>">
+                <td><?= (string)$subscription->SUBJECT_NAME; ?></td>
+                <td><?= (string)$subscription->CONTACT_NAME; ?></td>
+                <td><a class="trash" data-subject_id="<?= $subscription->SUBJECT_ID; ?>" data-contact_id="<?= $subscription->CONTACT_ID; ?>">
                         <i class="fa fa-trash-o" aria-hidden="true"></i>
                     </a></td>
             </tr>
-        <? endwhile; ?>
-        <?
-        } catch
-        (ErrorException $e) {
-            @file_put_contents('logfile.log', $e->getMessage() . "\r\n", FILE_APPEND | LOCK_EX);
-        }
-        ?>
+        <? endforeach; ?>
+
         <tr>
             <td></td>
             <td></td>
-            <td><a href="add.php"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td>
+            <td><a id="add-a"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td>
         </tr>
 
         </tbody>
     </table>
+</div>
+
+
+<div id="add-div" style="display: none;">
+    <form action="addSubscription.php" method="post">
+        <div class="bloc">
+            <select size="<?= (int)$xml->SUBJECT_COUNT + 1; ?>" multiple name="subjects[]">
+                <option disabled>Выберите типы рассылок</option>
+                <? foreach ($xml->subject as $subject) : ?>
+                <option value="<?= (int)$subject->SUBJECT_ID; ?>"><?= (string)$subject->SUBJECT_NAME; ?></option>
+                <? endforeach; ?>
+            </select>
+        </div>
+        <div class="bloc" style="margin-left: 30px;">
+            <select size="<?= (int)$xml->CONTACT_COUNT + 1; ?>" multiple name="contacts[]">
+                <option disabled>Выберите получателей</option>
+                <? foreach ($xml->contact as $contact) : ?>
+                    <option value="<?= (int)$contact->CONTACT_ID; ?>"><?= (string)$contact->CONTACT_NAME; ?></option>
+                <? endforeach; ?>
+            </select>
+        </div>
+        <p><input type="submit" value="Сохранить"></p>
+    </form>
 </div>
 
 
@@ -88,6 +115,12 @@ $sth = ibase_execute($preparedSQL);
                 $(that).parents('tr').remove();
             }
         });
+    });
+
+
+    $('#add-a').click(function () {
+        $('#list-div').css({display: 'none'});
+        $('#add-div').css({display: 'block'});
     });
 
 

@@ -17,9 +17,10 @@ $faker = Faker\Factory::create('ru_RU');
 //}
 
 
-$preparedSQL = ibase_prepare('INSERT INTO SUBJECTS (SUBJECT_ID, SUBJECT_NAME) VALUES (?, ?) ');
+$preparedSQL = ibase_prepare('INSERT INTO CONTACTS (CONTACT_ID, CONTACT_NAME) VALUES (?, ?) ');
+//$preparedSQL = ibase_prepare('INSERT INTO SUBJECTS (SUBJECT_ID, SUBJECT_NAME) VALUES (?, ?) ');
 
 
 for ($i = 1; $i <= 20; $i++) {
-    $sth = ibase_execute($preparedSQL, $faker->randomDigitNotNull(), $faker->sentence());
+    $sth = ibase_execute($preparedSQL, $faker->randomDigitNotNull(), $faker->email);
 }
