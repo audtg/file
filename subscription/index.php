@@ -92,12 +92,15 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
             </select>
         </div>
         <div class="bloc" style="margin-left: 30px;">
-            <select size="<?= (int)$xml->CONTACT_COUNT + 1; ?>" multiple name="contacts[]">
-                <option disabled>Выберите получателей</option>
+            <ul>
                 <? foreach ($xml->contact as $contact) : ?>
-                    <option value="<?= (int)$contact->CONTACT_ID; ?>"><?= (string)$contact->CONTACT_NAME; ?></option>
+                    <li>
+                        <span><?= (string)$contact->CONTACT_NAME; ?></span>
+                        <input type="checkbox" name="contacts[]" value="<?= (string)$contact->CONTACT_ID; ?>">
+                    </li>
                 <? endforeach; ?>
-            </select>
+            </ul>
+            <a href="edit.php" type="button">edit</a>
         </div>
         <p><input type="submit" value="Сохранить"></p>
     </form>
