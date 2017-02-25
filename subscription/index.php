@@ -53,20 +53,33 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
 ?>
 
 <div id="list-div">
+    <form action="">
     <table>
         <thead>
         <th>Тип рассылки</th>
         <th>Получатель</th>
         <th></th>
+        <th></th>
         </thead>
         <tbody>
         <? foreach($xml->subscription as $subscription) : ?>
-            <tr>
+            <?php
+            if ((integer)$subscription->ACCEPT) {
+                $opacity =  1;
+                $checked = 'checked disabled';
+            } else {
+                $opacity =  0.7;
+                $checked = '';
+            }
+            ?>
+            <tr style="opacity: <?= $opacity; ?>">
                 <td><?= (string)$subscription->SUBJECT_NAME; ?></td>
                 <td><?= (string)$subscription->CONTACT_NAME; ?></td>
                 <td><a class="trash" data-subject_id="<?= $subscription->SUBJECT_ID; ?>" data-contact_id="<?= $subscription->CONTACT_ID; ?>">
                         <i class="fa fa-trash-o" aria-hidden="true"></i>
                     </a></td>
+                <td><input type="checkbox" <?= $checked; ?> name="subscriptions[]"
+                           value="<?= (integer)$subscription->SUBJECT_ID.'|'.(integer)$subscription->CONTACT_ID.'|'.(string)$subscription->CONTACT_NAME; ?>"></td>
             </tr>
         <? endforeach; ?>
 
@@ -78,6 +91,8 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
 
         </tbody>
     </table>
+        <button type="submit">Send mail.</button>
+    </form>
 </div>
 
 
@@ -124,6 +139,14 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
     $('#add-a').click(function () {
         $('#list-div').css({display: 'none'});
         $('#add-div').css({display: 'block'});
+    });
+
+    jQuery('#list-div').find('form').submit(function(event) {
+        var postData =  jQuery(this).serialize();
+        event.preventDefault();
+        jQuery.post('sendMail.php', postData, function(response) {
+            console.log(response);
+        }, 'json');
     });
 
 

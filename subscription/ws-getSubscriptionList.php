@@ -17,11 +17,11 @@ set_error_handler("exception_error_handler");
 $dbh = ibase_connect($host, $username, $password, 'utf-8');
 
 $subscriptionSQL = ibase_prepare('
-select ss.CONTACT_ID,  c.CONTACT_NAME, ss.SUBJECT_ID, s.SUBJECT_NAME
+select ss.CONTACT_ID,  c.CONTACT_NAME, ss.SUBJECT_ID, s.SUBJECT_NAME, ss.ACCEPT
 from SUBSCRIPTIONS ss
 INNER JOIN CONTACTS c ON c.CONTACT_ID = ss.CONTACT_ID
 INNER JOIN SUBJECTS s ON s.SUBJECT_ID = ss.SUBJECT_ID
-order by s.SUBJECT_NAME, c.CONTACT_NAME');
+order by ss.ACCEPT DESC, s.SUBJECT_NAME, c.CONTACT_NAME');
 
 $subjectSQL = ibase_prepare('
 select s.SUBJECT_ID, s.SUBJECT_NAME
@@ -44,6 +44,7 @@ try {
         $XML_txt .= '<SUBJECT_NAME>' . $subscriptionRow->SUBJECT_NAME . '</SUBJECT_NAME>';
         $XML_txt .= '<CONTACT_ID>' . $subscriptionRow->CONTACT_ID . '</CONTACT_ID>';
         $XML_txt .= '<CONTACT_NAME>' . $subscriptionRow->CONTACT_NAME . '</CONTACT_NAME>';
+        $XML_txt .= '<ACCEPT>' . $subscriptionRow->ACCEPT . '</ACCEPT>';
         $XML_txt .= '</subscription>';
     }
     $subjectSth = ibase_execute($subjectSQL);

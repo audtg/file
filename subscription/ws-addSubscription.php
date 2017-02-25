@@ -18,7 +18,7 @@ $dbh = ibase_connect($host, $username, $password, 'utf-8');
 
 //file_put_contents('ws-post.log', print_r($_POST, true));
 
-$preparedSQL = ibase_prepare('INSERT INTO SUBSCRIPTIONS (SUBJECT_ID, CONTACT_ID) VALUES (?, ?)');
+$preparedSQL = ibase_prepare('INSERT INTO SUBSCRIPTIONS VALUES (?, ?, 0, NULL)');
 
 foreach ($_POST['subjects'] as $subject){
     foreach ($_POST['contacts'] as $contact){

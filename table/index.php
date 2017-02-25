@@ -18,7 +18,7 @@
             <th></th>
         </tr>
         <tr>
-            <td colspan="5" style="text-align: right;"><input id="check-all" type="checkbox"></td>
+            <td colspan="5" style="text-align: right;"><input class="check-all" type="checkbox"></td>
         </tr>
         <tr>
             <td>34,5</td>
@@ -92,11 +92,16 @@
         <input type="checkbox" name="items[]" value="B"><br>
         <input type="checkbox" name="items[]" value="C"><br>
         <input type="checkbox" name="items[]" value="D"><br><br>
+        <input type="checkbox" class="check-all"><br>
+        <input type="checkbox" class="check-one"><br>
+        <input type="checkbox" class="check-one"><br>
+        <input type="checkbox" class="check-one"><br>
+        <input type="checkbox" class="check-one"><br>
         <label for="phone-input">Phone</label>
         <input type="text" name="phone" required><br><br>
-        <label for="email-input">Email</label>
+        <label for="email-input" value="tagedo@yandex.ru">Email</label>
         <input type="email" name="email"><br><br>
-        <p><input type="submit"></p>
+       <button type="submit">Submit</button>
     </form>
     <br>
     <button id="to-table-btn">To Table</button>
@@ -106,16 +111,34 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
 <script>
-    jQuery('#check-all').click(function () {
-        jQuery('.check-one').prop('checked', jQuery(this).prop('checked'));
+
+    function clearForm(jqForm) {
+        jqForm.find('input').each(function(ind, item) {
+            switch (jQuery(item).attr('type')) {
+                case 'checkbox':
+                case 'radio':
+                    jQuery(item).prop('checked', false);
+                    break;
+                default:
+                    jQuery(item).val('');
+                    break;
+
+            }
+        });
+    }
+
+    jQuery('.check-all').click(function () {
+        jQuery(this).parentsUntil('div').find('.check-one').prop('checked', jQuery(this).prop('checked'));
     });
 
     jQuery('#to-form-btn').click(function () {
+        clearForm(jQuery('form'));
         jQuery('#table-div').css({display: 'none'});
         jQuery('#form-div').css({display: 'block'});
     });
 
     jQuery('#to-table-btn').click(function () {
+        clearForm(jQuery('table'));
         jQuery('#table-div').css({display: 'block'});
         jQuery('#form-div').css({display: 'none'});
     });
