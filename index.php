@@ -57,7 +57,7 @@
 //    }
 //}
 require_once 'getNames.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/exceptions/one_tag.php';
+
 //require_once $_SERVER['DOCUMENT_ROOT'].'/curl/index.php';
 //
 //c();

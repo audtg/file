@@ -42,17 +42,28 @@ if (!$validLocale) {
 //$newPersonalArray = array_combine(array_column($personalArray, 0) , $personalArray);
 $timestamp3 = time();
 $commonFile= file('common.csv');
-$commonKeys =  array_column($commonFile, 1);
-echo count($commonFile).' '.count($commonKeys);
+var_dump($commonFile);
+array_walk($commonFile, function(&$value, &$key) {
+$value = explode(',', $value);
+$value[0] = array($value[0] => $value[1]);
+});
+//var_dump($commonFile);
 //$commonArray = array_combine(array_column($commonFile, 0) , $commonFile);
-//$personalFile= file('personal.csv');
+$personalFile= file('personal.csv');
+array_walk($personalFile, function(&$value, &$key) {
+    $value = explode(',', $value);
+//    $value[0] = array($value[0] => $value[1]);
+});
+var_dump($personalFile);
 //$personalArray = array_combine(array_column($personalFile, 0) , $personalFile);
 //$timestamp4 = time();
-file_put_contents('times.log', $timestamp1."\t".$timestamp2."\t".$timestamp3."\t".$timestamp4."\t".($timestamp2-$timestamp1)."\t".($timestamp3-$timestamp2)."\t".($timestamp4-$timestamp3));
-file_put_contents('common.log', print_r($commonFile, true));
-file_put_contents('personal.log', print_r($personalArray, true));
+//file_put_contents('times.log', $timestamp1."\t".$timestamp2."\t".$timestamp3."\t".$timestamp4."\t".($timestamp2-$timestamp1)."\t".($timestamp3-$timestamp2)."\t".($timestamp4-$timestamp3));
+//file_put_contents('common.log', print_r($commonFile, true));
+//file_put_contents('personal.log', print_r($personalArray, true));
 
-
+//array_walk($commonFile, function($item, $key) {
+//
+//}, $personalFile);
 
 
 //$info = array();
