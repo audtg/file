@@ -1,6 +1,6 @@
 <?php
 $urlPrefix = 'http://file/table/';
-$url = $urlPrefix . 'ws_get_table.php';
+$url = $urlPrefix . 'ws_table.php';
 
 $context = stream_context_create();
 
@@ -13,6 +13,7 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
 <head>
     <meta charset="utf-8">
     <title>Тег INPUT, атрибут checked</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 
@@ -21,17 +22,15 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
     <table style="font-size: 12px; font-family: Verdana; border-collapse: collapse;">
         <thead>
         <tr>
-            <th><a class="matid-th">MAT_ID</a></th>
-            <th><a class="model-th">MODEL</a></th>
-            <th><a class="name-th">NAME</a></th>
+            <th><a class="subject-th" style="text-decoration: none;">SUBJECT_NAME</a></th>
+            <th><a class="contact-th" style="text-decoration: underline;">CONTACT_NAME</a></th>
         </tr>
         </thead>
         <tbody>
         <? foreach ($xml->item as $item) : ?>
             <tr>
-                <td class="matid"><?= (integer)$item->MAT_ID; ?></td>
-                <td class="model"><?= (string)$item->MODEL; ?></td>
-                <td class="name"><?= (string)$item->NAME; ?></td>
+                <td class="subject"><?= (string)$item->SUBJECT_NAME; ?></td>
+                <td class="contact"><?= (string)$item->CONTACT_NAME; ?></td>
             </tr>
         <? endforeach; ?>
         </tbody>
@@ -40,31 +39,6 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
     <button id="to-form-btn">To Form</button>
 </div>
 
-<div id="form-div" style="display: none;">
-    <form>
-        <p><b>Как по вашему мнению расшифровывается аббревиатура &quot;ОС&quot;?</b></p>
-        <p><input type="radio" name="answer" value="a1">Офицерский состав<Br>
-            <input type="radio" name="answer" value="a2">Операционная система<Br>
-            <input type="radio" name="answer" value="a3">Большой полосатый мух</p>
-        <input type="checkbox" name="items[]" value="A"><br>
-        <input type="checkbox" name="items[]" value="B"><br>
-        <input type="checkbox" name="items[]" value="C"><br>
-        <input type="checkbox" name="items[]" value="D"><br><br>
-        <input type="checkbox" class="check-all"><br>
-        <input type="checkbox" class="check-one"><br>
-        <input type="checkbox" class="check-one"><br>
-        <input type="checkbox" class="check-one"><br>
-        <input type="checkbox" class="check-one"><br>
-        <label for="phone-input">Phone</label>
-        <input type="text" name="phone" required><br><br>
-        <label for="email-input" value="tagedo@yandex.ru">Email</label>
-        <input type="email" name="email"><br><br>
-        <button type="submit">Submit</button>
-    </form>
-    <br>
-    <button id="to-table-btn">To Table</button>
-
-</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
@@ -74,15 +48,13 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
 
     jQuery(function () {
 
-        var matid = '';
-        var model = '';
-        var name = '';
+        var subject = '';
+        var contact = '';
         jQuery('tr').each(function (ind, item) {
             if (ind > 0) {
-                matid = jQuery(item).find('.matid').html();
-                model = jQuery(item).find('.model').html();
-                name = jQuery(item).find('.name').html();
-                dataArray.push([matid, model, name]);
+                subject = jQuery(item).find('.subject').html();
+                contact = jQuery(item).find('.contact').html();
+                dataArray.push([subject, contact]);
             }
 
 
@@ -90,24 +62,24 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
         console.log(dataArray);
     });
 
-    function sMatid(i, ii) { // По имени (возрастание)
-        return i[0] - ii[0];
-    }
+//    function sMatid(i, ii) { // По имени (возрастание)
+//        return i[0] - ii[0];
+//    }
 
 
-    function sModel(i, ii) { // По возрасту (возрастание)
-        if (i[1] > ii[1])
+    function sSubject(i, ii) { // По возрасту (возрастание)
+        if (i[0] > ii[0])
             return 1;
-        else if (i[1] < ii[1])
+        else if (i[0] < ii[0])
             return -1;
         else
             return 0;
     }
 
-    function sName(i, ii) { // По возрасту (возрастание)
-        if (i[2] > ii[2])
+    function sContact(i, ii) { // По возрасту (возрастание)
+        if (i[1] > ii[1])
             return 1;
-        else if (i[2] < ii[2])
+        else if (i[1] < ii[1])
             return -1;
         else
             return 0;
@@ -121,26 +93,25 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
                 .append(jQuery('<tr>')
                     .append(jQuery('<td>').html(dataArray[i][0]))
                     .append(jQuery('<td>').html(dataArray[i][1]))
-                    .append(jQuery('<td>').html(dataArray[i][2]))
                 );
         }
     }
 
 
-    jQuery('.matid-th').click(function () {
-        dataArray.sort(sMatid);
+    jQuery('.subject-th').click(function () {
+        dataArray.sort(sSubject);
         recreateTbody();
+        jQuery('.subject-th').css('text-decoration', 'none');
+        jQuery('.contact-th').css('text-decoration', 'underline');
     });
 
-    jQuery('.model-th').click(function () {
-        dataArray.sort(sModel);
+    jQuery('.contact-th').click(function () {
+        dataArray.sort(sContact);
         recreateTbody();
+        jQuery('.subject-th').css('text-decoration', 'underline');
+        jQuery('.contact-th').css('text-decoration', 'none');
     });
 
-    jQuery('.name-th').click(function () {
-        dataArray.sort(sName);
-        recreateTbody();
-    });
 
     function clearForm(jqForm) {
         jqForm.find('input').each(function (ind, item) {
