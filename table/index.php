@@ -19,17 +19,19 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
 
 <div id="table-div">
     <table style="font-size: 12px; font-family: Verdana; border-collapse: collapse;">
+        <thead>
         <tr>
-            <th><a class="matid">MAT_ID</a></th>
-            <th><a class="model">MODEL</a></th>
-            <th><a class="name">NAME</a></th>
+            <th><a class="matid-th">MAT_ID</a></th>
+            <th><a class="model-th">MODEL</a></th>
+            <th><a class="name-th">NAME</a></th>
         </tr>
+        </thead>
         <tbody>
         <? foreach ($xml->item as $item) : ?>
             <tr>
-                <td><?= (integer)$item->MAT_ID; ?></td>
-                <td><?= (string)$item->MODEL; ?></td>
-                <td><?= (string)$item->NAME; ?></td>
+                <td class="matid"><?= (integer)$item->MAT_ID; ?></td>
+                <td class="model"><?= (string)$item->MODEL; ?></td>
+                <td class="name"><?= (string)$item->NAME; ?></td>
             </tr>
         <? endforeach; ?>
         </tbody>
@@ -89,12 +91,7 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
     });
 
     function sMatid(i, ii) { // По имени (возрастание)
-        if (i[0] > ii[0])
-            return 1;
-        else if (i[0] < ii[0])
-            return -1;
-        else
-            return 0;
+        return i[0] - ii[0];
     }
 
 
@@ -117,67 +114,32 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
     }
 
 
-    jQuery('.matid').click(function () {
+    function recreateTbody() {
+        jQuery('tbody').empty();
+        for (var i = 0; i < dataArray.length; i++) {
+            jQuery('tbody')
+                .append(jQuery('<tr>')
+                    .append(jQuery('<td>').html(dataArray[i][0]))
+                    .append(jQuery('<td>').html(dataArray[i][1]))
+                    .append(jQuery('<td>').html(dataArray[i][2]))
+                );
+        }
+    }
 
-        console.log('matid');
+
+    jQuery('.matid-th').click(function () {
         dataArray.sort(sMatid);
-//        console.log(dataArray);
-        jQuery('table').empty();
-        jQuery('table').append(jQuery('<tr><th><a class="matid">MAT_ID</a></th><th><a class="model">MODEL</a></th><th><a class="name">NAME</a></th></tr>'));
-        for (var i = 0; i < dataArray.length; i++) {
-            console.log(dataArray[i][0]);
-            console.log(dataArray[i][1]);
-            console.log(dataArray[i][2]);
-//            jQuery('table').append(jQuery('<tr><th><a id="matid">MAT_ID</a></th><th><a id="model">MODEL</a></th><th><a id="name">NAME</a></th></tr>'));
-            jQuery('table')
-                .append(jQuery('<tr>')
-                    .append(jQuery('<td>').html(dataArray[i][0]))
-                    .append(jQuery('<td>').html(dataArray[i][1]))
-                    .append(jQuery('<td>').html(dataArray[i][2]))
-                );
-        }
+        recreateTbody();
     });
 
-    jQuery('.model').click(function () {
-
-        console.log('model');
+    jQuery('.model-th').click(function () {
         dataArray.sort(sModel);
-//        console.log(dataArray);
-        jQuery('table').empty();
-        jQuery('table').append(jQuery('<tr><th><a class="matid">MAT_ID</a></th><th><a class="model">MODEL</a></th><th><a class="name">NAME</a></th></tr>'));
-        for (var i = 0; i < dataArray.length; i++) {
-            console.log(dataArray[i][0]);
-            console.log(dataArray[i][1]);
-            console.log(dataArray[i][2]);
-//            jQuery('table').append(jQuery('<tr><th><a id="matid">MAT_ID</a></th><th><a id="model">MODEL</a></th><th><a id="name">NAME</a></th></tr>'));
-            jQuery('table')
-                .append(jQuery('<tr>')
-                    .append(jQuery('<td>').html(dataArray[i][0]))
-                    .append(jQuery('<td>').html(dataArray[i][1]))
-                    .append(jQuery('<td>').html(dataArray[i][2]))
-                );
-        }
+        recreateTbody();
     });
 
-    jQuery('.name').click(function () {
-
-        console.log('name');
+    jQuery('.name-th').click(function () {
         dataArray.sort(sName);
-//        console.log(dataArray);
-        jQuery('table').empty();
-        jQuery('table').append(jQuery('<tr><th><a class="matid">MAT_ID</a></th><th><a class="model">MODEL</a></th><th><a class="name">NAME</a></th></tr>'));
-        for (var i = 0; i < dataArray.length; i++) {
-            console.log(dataArray[i][0]);
-            console.log(dataArray[i][1]);
-            console.log(dataArray[i][2]);
-//            jQuery('table').append(jQuery('<tr><th><a id="matid">MAT_ID</a></th><th><a id="model">MODEL</a></th><th><a id="name">NAME</a></th></tr>'));
-            jQuery('table')
-                .append(jQuery('<tr>')
-                    .append(jQuery('<td>').html(dataArray[i][0]))
-                    .append(jQuery('<td>').html(dataArray[i][1]))
-                    .append(jQuery('<td>').html(dataArray[i][2]))
-                );
-        }
+        recreateTbody();
     });
 
     function clearForm(jqForm) {
