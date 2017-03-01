@@ -18,6 +18,16 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
 <body>
 
 
+<!--<form id="my-form">-->
+<!--    <input type="email" name="email"><br>-->
+<!--<!--    <input type="submit"><br>-->
+<!---->
+<!--    <a id="my-a" type="submit"><i class="fa fa-check-circle" aria-hidden="true"></i></a>-->
+<!--    <span class="format-error-p" style="display: none;">Неверный формат.</span>-->
+<!--</form>-->
+
+
+
 <div id="table-div">
     <table style="font-size: 12px; font-family: Verdana; border-collapse: collapse;">
         <thead>
@@ -30,7 +40,17 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
         <? foreach ($xml->item as $item) : ?>
             <tr>
                 <td class="subject"><?= (string)$item->SUBJECT_NAME; ?></td>
-                <td class="contact"><?= (string)$item->CONTACT_NAME; ?></td>
+                <td><div class="contact">
+                        <?= (string)$item->CONTACT_NAME; ?><br>
+                    </div>
+                    <a class="add-a"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                    <form style="display: none;">
+                        <input type="email" name="email">
+                        <a class="submit-a" type="submit"><i class="fa fa-check" aria-hidden="true"></i></a>
+                        <a class="cansel-a"><i class="fa fa-times" aria-hidden="true"></i></a>
+                    </form>
+
+                </td>
             </tr>
         <? endforeach; ?>
         </tbody>
@@ -43,6 +63,62 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
 <script>
+
+    function validateEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+
+    jQuery('input[name="email"]').keydown(function(event) {
+        if (event.keyCode === 13) {
+            jQuery(this).parents('form').find('.submit-a').click();
+        }
+        if (event.keyCode === 27) {
+            jQuery(this).parents('form').find('.cansel-a').click();
+        }
+    });
+
+    jQuery('.add-a').click(function () {
+        jQuery(this).css({display: 'none'});
+        jQuery(this).parents('td').find('form').css({display: 'block'});
+
+    });
+
+    jQuery('.submit-a').click(function () {
+        jQuery(this).parents('form').submit();
+
+    });
+
+    jQuery('.cansel-a').click(function () {
+        console.log('cansel');
+        jQuery(this).parents('td').find('form').css({display: 'none'});
+        jQuery(this).parents('td').find('.add-a').css({display: 'block'});
+
+    });
+
+    jQuery('input[name="email"]').mousedown(function( event ) {
+        jQuery(this).css({color: "black"});
+    });
+
+    jQuery('form').submit(function (event) {
+        console.log('this is submit');
+        var data = jQuery(this).serialize();
+        var email = jQuery(this).find('input[name="email"]').val();
+        console.log(data);
+        console.log(email);
+        console.log(validateEmail(email));
+        if (validateEmail(email)) {
+            jQuery(this).find('input[name="email"]').val('');
+            var jCont = jQuery(this).parents('tr').find('.contact');
+            var text = jCont.html()+  email + '<br>';
+            jCont.html(text);
+            jQuery(this).css({display: 'none'});
+            jQuery(this).parents('td').find('.add-a').css({display: 'block'});
+        } else {
+            jQuery(this).find('input[name="email"]').css({color: "red"});
+        }
+    });
+
 
     var dataArray = [];
 
@@ -59,7 +135,7 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
 
 
         });
-        console.log(dataArray);
+//        console.log(dataArray);
     });
 
 //    function sMatid(i, ii) { // По имени (возрастание)
