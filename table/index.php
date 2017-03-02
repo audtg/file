@@ -30,38 +30,36 @@ $currCorr = 0;
 <!--</form>-->
 
 <table>
-    <? foreach ($xml->item as $item) : ?>
-        <? if ((integer)$item->SUBJECT_ID != $current): ?>
-            <? if ($current > 0): ?>
-                </td>
-                </tr>
-            <? endif; ?>
-            <tr>
-                <td>
-                    <h5><?= (integer)$item->SUBJECT_ID; ?></h5>
-                    <p><?= (string)$item->SUBJECT_NAME; ?></p>
-                    <?php
-                    $currSubject = (integer)$item->SUBJECT_ID;
-                    $currCorr = 0;
-                    ?>
-        <? endif; ?>
-
-                        <? if ((integer)$item->CORR_ID != $currCorr): ?>
-                        <? if ($currCorr == 0): ?>
-                    <table>
+    <? foreach ($xml->subscription as $subscription) : ?>
+        <tr>
+            <td>
+                <h5><?= (integer)$subscription->SUBJECT_ID; ?></h5>
+                <p><?= (string)$subscription->SUBJECT_NAME; ?></p>
+                <table>
+                    <? foreach ($xml->subscription->corr as $corr) : ?>
                         <tr>
-                            <td>
-
+                            <td style="width: 30%;"></td>
+                            <td style="width: 30%;">
+                                <h6><?= (string)$corr->CORR_NAME; ?></h6>
                             </td>
-                            </tr>
-                        <? endif; ?>
-                        <tr>
-                            <td>
-                                <h5><?= (integer)$item->SUBJECT_ID; ?></h5>
-                                <p><?= (string)$item->SUBJECT_NAME; ?></p>
-                                <?php $current = (integer)$item->SUBJECT_ID; ?>
-                                <? endif; ?>
-                    </table>
+                            <td style="width: 40%;">
+                                <table>
+                                    <? foreach ($xml->subscription->corr->contact as $contact) : ?>
+                                        <tr>
+                                            <td><?= (string)$contact->CONTACT_NAME; ?></td>
+                                            <td><a class="cansel-a"><i class="fa fa-times" aria-hidden="true"></i></a>
+                                            </td>
+                                        </tr>
+                                    <? endforeach; ?>
+                                </table>
+                            </td>
+                        </tr>
+                    <? endforeach; ?>
+                </table>
+            </td>
+
+        </tr>
+
     <? endforeach; ?>
 </table>
 

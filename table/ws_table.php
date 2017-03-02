@@ -61,7 +61,7 @@ $XML_txt .= '<data>';
 $subscriptionSth = ibase_execute($subscriptionSQL);
 while ($subscriptionRow = ibase_fetch_object($subscriptionSth)) {
     $subjects[] = $subscriptionRow->SUBJECT_ID;
-    $XML_txt .= '<item>';
+    $XML_txt .= '<subscription>';
     $XML_txt .= '<SUBJECT_ID>' . $subscriptionRow->SUBJECT_ID . '</SUBJECT_ID>';
     $XML_txt .= '<SUBJECT_NAME>' . $subscriptionRow->SUBJECT_NAME . '</SUBJECT_NAME>';
     $corrSth = ibase_execute($corrSQL, $subscriptionRow->SUBJECT_ID);
@@ -78,7 +78,7 @@ while ($subscriptionRow = ibase_fetch_object($subscriptionSth)) {
         }
         $XML_txt .= '</corr>';
     }
-    $XML_txt .= '</item>';
+    $XML_txt .= '</subscription>';
 }
 
 $subjectsCond = implode(', ', $subjects);
