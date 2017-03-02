@@ -6,6 +6,9 @@ $context = stream_context_create();
 
 $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, false);
 
+$currSubject = 0;
+$currCorr = 0;
+
 ?>
 
 <!DOCTYPE HTML>
@@ -26,38 +29,73 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
 <!--    <span class="format-error-p" style="display: none;">Неверный формат.</span>-->
 <!--</form>-->
 
-
-
-<div id="table-div">
-    <table style="font-size: 12px; font-family: Verdana; border-collapse: collapse;">
-        <thead>
-        <tr>
-            <th><a class="subject-th" style="text-decoration: none;">SUBJECT_NAME</a></th>
-            <th><a class="contact-th" style="text-decoration: underline;">CONTACT_NAME</a></th>
-        </tr>
-        </thead>
-        <tbody>
-        <? foreach ($xml->item as $item) : ?>
-            <tr>
-                <td class="subject"><?= (string)$item->SUBJECT_NAME; ?></td>
-                <td><div class="contact">
-                        <?= (string)$item->CONTACT_NAME; ?><br>
-                    </div>
-                    <a class="add-a"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
-                    <form style="display: none;">
-                        <input type="email" name="email">
-                        <a class="submit-a" type="submit"><i class="fa fa-check" aria-hidden="true"></i></a>
-                        <a class="cansel-a"><i class="fa fa-times" aria-hidden="true"></i></a>
-                    </form>
-
+<table>
+    <? foreach ($xml->item as $item) : ?>
+        <? if ((integer)$item->SUBJECT_ID != $current): ?>
+            <? if ($current > 0): ?>
                 </td>
-            </tr>
-        <? endforeach; ?>
-        </tbody>
-    </table>
-    <br>
-    <button id="to-form-btn">To Form</button>
-</div>
+                </tr>
+            <? endif; ?>
+            <tr>
+                <td>
+                    <h5><?= (integer)$item->SUBJECT_ID; ?></h5>
+                    <p><?= (string)$item->SUBJECT_NAME; ?></p>
+                    <?php
+                    $currSubject = (integer)$item->SUBJECT_ID;
+                    $currCorr = 0;
+                    ?>
+        <? endif; ?>
+
+                        <? if ((integer)$item->CORR_ID != $currCorr): ?>
+                        <? if ($currCorr == 0): ?>
+                    <table>
+                        <tr>
+                            <td>
+
+                            </td>
+                            </tr>
+                        <? endif; ?>
+                        <tr>
+                            <td>
+                                <h5><?= (integer)$item->SUBJECT_ID; ?></h5>
+                                <p><?= (string)$item->SUBJECT_NAME; ?></p>
+                                <?php $current = (integer)$item->SUBJECT_ID; ?>
+                                <? endif; ?>
+                    </table>
+    <? endforeach; ?>
+</table>
+
+
+<!--<div id="table-div">-->
+<!--    <table style="font-size: 12px; font-family: Verdana; border-collapse: collapse;">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th><a class="subject-th" style="text-decoration: none;">SUBJECT_NAME</a></th>-->
+<!--            <th><a class="contact-th" style="text-decoration: underline;">CONTACT_NAME</a></th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        --><? // foreach ($xml->item as $item) : ?>
+<!--            <tr>-->
+<!--                <td class="subject">--><? //= (string)$item->SUBJECT_NAME; ?><!--</td>-->
+<!--                <td><div class="contact">-->
+<!--                        --><? //= (string)$item->CONTACT_NAME; ?><!--<br>-->
+<!--                    </div>-->
+<!--                    <a class="add-a"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>-->
+<!--                    <form style="display: none;">-->
+<!--                        <input type="email" name="email">-->
+<!--                        <a class="submit-a" type="submit"><i class="fa fa-check" aria-hidden="true"></i></a>-->
+<!--                        <a class="cansel-a"><i class="fa fa-times" aria-hidden="true"></i></a>-->
+<!--                    </form>-->
+<!---->
+<!--                </td>-->
+<!--            </tr>-->
+<!--        --><? // endforeach; ?>
+<!--        </tbody>-->
+<!--    </table>-->
+<!--    <br>-->
+<!--    <button id="to-form-btn">To Form</button>-->
+<!--</div>-->
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -69,7 +107,7 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
         return re.test(email);
     }
 
-    jQuery('input[name="email"]').keydown(function(event) {
+    jQuery('input[name="email"]').keydown(function (event) {
         if (event.keyCode === 13) {
             jQuery(this).parents('form').find('.submit-a').click();
         }
@@ -96,7 +134,7 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
 
     });
 
-    jQuery('input[name="email"]').mousedown(function( event ) {
+    jQuery('input[name="email"]').mousedown(function (event) {
         jQuery(this).css({color: "black"});
     });
 
@@ -110,7 +148,7 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
         if (validateEmail(email)) {
             jQuery(this).find('input[name="email"]').val('');
             var jCont = jQuery(this).parents('tr').find('.contact');
-            var text = jCont.html()+  email + '<br>';
+            var text = jCont.html() + email + '<br>';
             jCont.html(text);
             jQuery(this).css({display: 'none'});
             jQuery(this).parents('td').find('.add-a').css({display: 'block'});
@@ -138,9 +176,9 @@ $xml = new SimpleXMLElement(file_get_contents($url, false, $context), null, fals
 //        console.log(dataArray);
     });
 
-//    function sMatid(i, ii) { // По имени (возрастание)
-//        return i[0] - ii[0];
-//    }
+    //    function sMatid(i, ii) { // По имени (возрастание)
+    //        return i[0] - ii[0];
+    //    }
 
 
     function sSubject(i, ii) { // По возрасту (возрастание)
