@@ -29,16 +29,19 @@ $currCorr = 0;
 <!--    <span class="format-error-p" style="display: none;">Неверный формат.</span>-->
 <!--</form>-->
 
-<table>
+<table style="border: solid 1px black;">
     <? foreach ($xml->subscription as $subscription) : ?>
         <tr>
-            <td>
+            <td style="width: 30%;">
                 <h5><?= (integer)$subscription->SUBJECT_ID; ?></h5>
                 <p><?= (string)$subscription->SUBJECT_NAME; ?></p>
-                <table>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut delectus illo ipsa qui tempora. Adipisci architecto aspernatur consequatur dignissimos, eaque est laboriosam, magnam possimus quae quas rem sequi soluta voluptates?
+                </td>
+            <td>
+                <table style="border: solid 1px black;">
                     <? foreach ($xml->subscription->corr as $corr) : ?>
                         <tr>
-                            <td style="width: 30%;"></td>
+<!--                            <td style="width: 30%;"></td>-->
                             <td style="width: 30%;">
                                 <h6><?= (string)$corr->CORR_NAME; ?></h6>
                             </td>
@@ -51,16 +54,25 @@ $currCorr = 0;
                                             </td>
                                         </tr>
                                     <? endforeach; ?>
+                                    <tr>
+                                        <td colspan="2">
+                                        <a class="add-a"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                                        </td>
+                                    </tr>
                                 </table>
                             </td>
                         </tr>
                     <? endforeach; ?>
+                    <tr><td colspan="2"><a class="add-a"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td></tr>
+
                 </table>
             </td>
 
         </tr>
 
     <? endforeach; ?>
+    <tr><td colspan="2"><a class="add-a"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td></tr>
+
 </table>
 
 
