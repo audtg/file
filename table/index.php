@@ -46,24 +46,44 @@ $currCorr = 0;
                                 <h6><?= (string)$corr->CORR_NAME; ?></h6>
                             </td>
                             <td style="width: 40%;">
+                                <form action="">
+                                    <input type="text" name="subjects[]" value="<?= (integer)$subscription->SUBJECT_ID; ?>" hidden>
                                 <table>
-                                    <? foreach ($xml->subscription->corr->contact as $contact) : ?>
+
+                                    <? foreach ($xml->subscription->corr->contacts->contact as $contact) : ?>
                                         <tr>
                                             <td><?= (string)$contact->CONTACT_NAME; ?></td>
+                                            <td>Заявка на подписку</td>
                                             <td><a class="cansel-a"><i class="fa fa-times" aria-hidden="true"></i></a>
                                             </td>
                                         </tr>
                                     <? endforeach; ?>
+                                    <? foreach ($xml->subscription->corr->allcontacts->contact as $contact) : ?>
+                                        <tr>
+                                            <td class="disabled_contact" style="display: none;"><?= (string)$contact->CONTACT_NAME; ?></td>
+                                            <td></td>
+                                            <td class="disabled_contact" style="display: none;"><input type="checkbox" name="contacts[]" value="<?= (integer)$contact->CONTACT_ID; ?>">                                            </td>
+                                        </tr>
+                                    <? endforeach; ?>
                                     <tr>
-                                        <td colspan="2">
+                                        <td>
                                         <a class="add-a"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+
+                                        <td class="disabled_contact" style="display: none;">
+                                            <button class="cansel-a">cansel</button>
+                                        </td>
+                                        </td>
+                                        <td class="disabled_contact" style="display: none;">
+                                            <button class="submit-a" type="submit">save</button>
                                         </td>
                                     </tr>
+
                                 </table>
+                                </form>
                             </td>
                         </tr>
                     <? endforeach; ?>
-                    <tr><td colspan="2"><a class="add-a"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td></tr>
+<!--                    <tr><td colspan="2"><a class="add-a"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td></tr>-->
 
                 </table>
             </td>
@@ -71,7 +91,7 @@ $currCorr = 0;
         </tr>
 
     <? endforeach; ?>
-    <tr><td colspan="2"><a class="add-a"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td></tr>
+<!--    <tr><td colspan="2"><a class="add-a"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td></tr>-->
 
 </table>
 
@@ -128,19 +148,19 @@ $currCorr = 0;
 
     jQuery('.add-a').click(function () {
         jQuery(this).css({display: 'none'});
-        jQuery(this).parents('td').find('form').css({display: 'block'});
+        jQuery(this).parentsUntil('table').find('.disabled_contact').css({display: 'table-cell'});
 
     });
 
-    jQuery('.submit-a').click(function () {
-        jQuery(this).parents('form').submit();
-
-    });
+//    jQuery('.submit-a').click(function () {
+//        jQuery(this).parents('form').submit();
+//
+//    });
 
     jQuery('.cansel-a').click(function () {
         console.log('cansel');
-        jQuery(this).parents('td').find('form').css({display: 'none'});
-        jQuery(this).parents('td').find('.add-a').css({display: 'block'});
+        jQuery(this).parentsUntil('table').find('.disabled_contact').css({display: 'none'});
+        jQuery(this).parentsUntil('table').find('.add-a').css({display: 'table-cell'});
 
     });
 
@@ -151,20 +171,22 @@ $currCorr = 0;
     jQuery('form').submit(function (event) {
         console.log('this is submit');
         var data = jQuery(this).serialize();
-        var email = jQuery(this).find('input[name="email"]').val();
+//        var email = jQuery(this).find('input[name="email"]').val();
         console.log(data);
-        console.log(email);
-        console.log(validateEmail(email));
-        if (validateEmail(email)) {
-            jQuery(this).find('input[name="email"]').val('');
-            var jCont = jQuery(this).parents('tr').find('.contact');
-            var text = jCont.html() + email + '<br>';
-            jCont.html(text);
-            jQuery(this).css({display: 'none'});
-            jQuery(this).parents('td').find('.add-a').css({display: 'block'});
-        } else {
-            jQuery(this).find('input[name="email"]').css({color: "red"});
-        }
+        jQuery(this).parentsUntil('table').find('.disabled_contact').css({display: 'none'});
+        jQuery(this).parentsUntil('table').find('.add-a').css({display: 'table-cell'});
+//        console.log(email);
+//        console.log(validateEmail(email));
+//        if (validateEmail(email)) {
+//            jQuery(this).find('input[name="email"]').val('');
+//            var jCont = jQuery(this).parents('tr').find('.contact');
+//            var text = jCont.html() + email + '<br>';
+//            jCont.html(text);
+//            jQuery(this).css({display: 'none'});
+//            jQuery(this).parents('td').find('.add-a').css({display: 'block'});
+//        } else {
+//            jQuery(this).find('input[name="email"]').css({color: "red"});
+//        }
     });
 
 

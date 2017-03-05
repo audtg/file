@@ -52,6 +52,13 @@ where not exists(
     WHERE ss.SUBJECT_ID = sub.SUBJECT_ID
 )');
 
+$allContactsSQL = ibase_prepare('
+SELECT DISTINCT c.CONTACT_ID, c.CONTACT_NAME
+FROM CONTACTS c
+WHERE  c.CORR_ID = ?
+ORDER BY c.CONTACT_NAME
+');
+
 $subjects = array();
 
 $XML_txt = '<?xml version="1.0" encoding="utf-8"?' . '>';
@@ -70,12 +77,23 @@ while ($subscriptionRow = ibase_fetch_object($subscriptionSth)) {
         $XML_txt .= '<CORR_ID>' . $corrRow->CORR_ID . '</CORR_ID>';
         $XML_txt .= '<CORR_NAME>' . $corrRow->CORR_NAME . '</CORR_NAME>';
         $contactSth = ibase_execute($contactSQL, $corrRow->CORR_ID, $subscriptionRow->SUBJECT_ID);
+        $XML_txt .= '<contacts>';
         while ($contactRow = ibase_fetch_object($contactSth)) {
             $XML_txt .= '<contact>';
             $XML_txt .= '<CONTACT_ID>' . $contactRow->CONTACT_ID . '</CONTACT_ID>';
             $XML_txt .= '<CONTACT_NAME>' . $contactRow->CONTACT_NAME . '</CONTACT_NAME>';
             $XML_txt .= '</contact>';
         }
+        $XML_txt .= '</contacts>';
+        $allContactsSth = ibase_execute($allContactsSQL, $corrRow->CORR_ID);
+        $XML_txt .= '<allcontacts>';
+        while ($contactRow = ibase_fetch_object($allContactsSth)) {
+            $XML_txt .= '<contact>';
+            $XML_txt .= '<CONTACT_ID>' . $contactRow->CONTACT_ID . '</CONTACT_ID>';
+            $XML_txt .= '<CONTACT_NAME>' . $contactRow->CONTACT_NAME . '</CONTACT_NAME>';
+            $XML_txt .= '</contact>';
+        }
+        $XML_txt .= '</allcontacts>';
         $XML_txt .= '</corr>';
     }
     $XML_txt .= '</subscription>';
